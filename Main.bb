@@ -277,8 +277,8 @@ Function LoadImageHUDScaled(file$, fixedSizeX% = 0, fixedSizeY% = 0)
 	Local h.HUDScaledImage = New HUDScaledImage
 	If fixedSizeX = 0 Then
 		img = LoadImage_Strict(file, HUDScale)
-		h\BaseWidth = ImageWidthUnscaled(img) * LoadImageScaleResult
-		h\BaseHeight = ImageHeightUnscaled(img) * LoadImageScaleResult
+		h\BaseWidth = BufferWidth(ImageBuffer(img)) * LoadImageScaleResult
+		h\BaseHeight = BufferHeight(ImageBuffer(img)) * LoadImageScaleResult
 	Else
 		If fixedSizeY = 0 Then fixedSizeY = fixedSizeX
 		img = LoadImage_Strict(file)
@@ -3120,7 +3120,7 @@ Include "Effects.bb"
 Global ResizeTexture%
 
 Function InitFastResize()
-	ResizeTexture = CreateTexture(SMALLEST_POWER_TWO, SMALLEST_POWER_TWO, 1 + 2 + 256 + 1024)
+	ResizeTexture = CreateTexture(SMALLEST_POWER_TWO, SMALLEST_POWER_TWO, 1 + 2 + 256)
 	InitPostProcess()
 End Function
 
@@ -8491,7 +8491,7 @@ Function LoadEntities()
 	
 	;TextureLodBias
 	
-	AmbientLightRoomTex% = CreateTexture(2,2,1+256+1024)
+	AmbientLightRoomTex% = CreateTexture(2,2,1+256)
 	AmbientLight = GetModdedINIInt(MapOptions, "facility", "ambient light")
 	AmbientLightNVG = GetModdedINIInt(MapOptions, "facility", "ambient light nvg")
 
@@ -8511,9 +8511,9 @@ Function LoadEntities()
 	CameraFogRange (Camera, CameraFogNear, CameraFogFar)
 	AmbientLight Brightness, Brightness, Brightness
 	
-	ScreenTexs[0] = CreateTexture(512, 512, 1+256+1024)
-	ScreenTexs[1] = CreateTexture(512, 512, 1+256+1024)
-	ScreenTexs[2] = CreateTexture(512, 512, 8192)
+	ScreenTexs[0] = CreateTexture(512, 512, 1+256)
+	ScreenTexs[1] = CreateTexture(512, 512, 1+256)
+	ScreenTexs[2] = CreateTexture(512, 512, 1024)
 	
 	CreateBlurImage()
 	CameraProjMode ark_blur_cam,0
@@ -8885,7 +8885,7 @@ Function LoadEntities()
 	
 	SetChunkDataValues()
 	
-	NavBG = CreateTexture(GraphicWidth,GraphicHeight, 1 + 1024)
+	NavBG = CreateTexture(GraphicWidth,GraphicHeight, 1 + 256)
 
 	;NPCtypeD - different models with different textures (loaded using "CopyEntity") - ENDSHN
 	;[Block]
@@ -9560,7 +9560,7 @@ Function NullGame(playbuttonsfx%=True)
 	
 	CatchErrors("Clear World")
 	; Don't clear shaders
-	ClearWorld(1, 1, 1, 0)
+	ClearWorld(1, 1, 1)
 	CatchErrors("Uncaught (Clear World)")
 
 	Camera = 0
@@ -9605,7 +9605,7 @@ Function PlaySound2%(SoundHandle%, cam%, entity%, range# = 10, volume# = 1.0, us
 End Function
 
 Function UpdateFireAndForgetSounds(s.FireAndForgetSounds)
-	If (Not ChannelPlaying(s\Chn)) Lor (Not EntityExist(s\Entity)) Lor (Not EntityExist(s\Camera)) Then UpdateChannelVolumeWithSubtitles(s\Chn, 0) : Delete s : Return
+	If (Not ChannelPlaying(s\Chn)) Lor (Not EntityExists(s\Entity)) Lor (Not EntityExists(s\Camera)) Then UpdateChannelVolumeWithSubtitles(s\Chn, 0) : Delete s : Return
 
 	Local dist# = EntityDistance(s\Camera, s\Entity) / s\Range
 	Local panvalue# = Sin(-DeltaYaw(s\Camera,s\Entity))
