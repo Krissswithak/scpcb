@@ -7619,6 +7619,19 @@ Function DrawMap()
 			Color r\RoomTemplate\r, r\RoomTemplate\g, r\RoomTemplate\b
 		EndIf
 		
+		If MouseOn(startX + ((18 - (r\x / 8)) * cellSize), startY + ((r\z / 8) * cellSize), cellSize, cellSize) 
+			Color 0, 0, 0
+			If MouseHit1
+				PositionEntity (Collider, EntityX(r\obj), EntityY(r\obj)+0.7, EntityZ(r\obj))
+				ResetEntity(Collider)
+				UpdateDoors()
+				UpdateRooms()
+				For it.Items = Each Items
+					it\disttimer = 0
+				Next
+				PlayerRoom = r
+			EndIf
+		EndIf
 		Rect(startX + ((18 - (r\x / 8)) * cellSize), startY + ((r\z / 8) * cellSize), cellSize, cellSize, 1)
 	Next
 End Function
